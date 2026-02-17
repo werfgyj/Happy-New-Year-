@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>新春祝福 · 恭贺新禧</title>
+<style>
+  /* 基础重置 */
+  html,body{height:100%;margin:0;font-family:"PingFang SC","Microsoft YaHei",system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;background:#b71c1c;color:#fff;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  /* 渐变背景与纹理 */
+  body{
+    background: linear-gradient(180deg,#9b111e 0%, #c62828 45%, #ff7043 100%);
+    position:relative;
+  }
+  .grain::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.02) 1px, rgba(0,0,0,0) 1px),
+      linear-gradient(180deg, rgba(0,0,0,0.04), rgba(255,255,255,0.02));
+    background-size:40px 40px, 100% 100%;
+    mix-blend-mode:overlay;
+  }
+
+  /* 舞台 */
+  .stage{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;text-align:center}
+  .card{
+    width:min(980px,94%);padding:32px;border-radius:14px;
+    background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06));
+    box-shadow:0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.02);
+    border:1px solid rgba(255,215,0,0.06);
+    backdrop-filter: blur(6px);
+  }
+
+  /* 标题 */
+  .title{font-size:clamp(28px,5vw,56px);margin:0;color:#fff7e6;font-weight:800;letter-spacing:2px;text-shadow:0 8px 26px rgba(0,0,0,0.55), 0 0 8px rgba(255,200,20,0.08);display:inline-block;padding:8px 18px;border-radius:12px;background:linear-gradient(90deg, rgba(255,215,0,0.06), rgba(255,255,255,0.02));animation:float 4s ease-in-out infinite}
+  @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+
+  .subtitle{margin:12px 0 0;color:rgba(255,245,230,0.95);font-size:clamp(14px,2.2vw,18px);letter-spacing:0.6px}
+  .blessings{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+  .blessing{background:rgba(255,245,220,0.06);padding:10px 14px;border-radius:999px;color:#fffbe6;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,0.35);border:1px solid rgba(255,215,0,0.06);transform-origin:center;animation:pop 6s ease-in-out infinite}
+  @keyframes pop{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
+  .blessing:nth-child(2){animation-delay:.4s}.blessing:nth-child(3){animation-delay:.9s}.blessing:nth-child(4){animation-delay:1.3s}
+
+  /* 灯笼 */
+  .lantern{position:fixed;top:20px;z-index:2;pointer-events:none;opacity:0.95}
+  .lantern.left{left:18px;animation:swayL 5s ease-in-out infinite}
+  .lantern.right{right:18px;animation:swayR 5s ease-in-out infinite}
+  @keyframes swayL{0%{transform:rotate(-2deg)}50%{transform:rotate(3deg)}100%{transform:rotate(-2deg)}}
+  @keyframes swayR{0%{transform:rotate(2deg)}50%{transform:rotate(-3deg)}100%{transform:rotate(2deg)}}
+
+  /* 福字/春字飘动 */
+  .floating-words{position:absolute;inset:auto 0 40px 0;display:flex;gap:22px;justify-content:center;z-index:2;pointer-events:none}
+  .word{
+    font-size:clamp(36px,6.5vw,88px);font-weight:900;color:#fffaf0;text-shadow:0 10px 30px rgba(0,0,0,0.6);opacity:0.98;
+    transform-origin:center;filter:drop-shadow(0 10px 18px rgba(0,0,0,0.45));
+    animation:wordFloat 6s ease-in-out infinite;
+    background: linear-gradient(90deg, rgba(255,240,200,0.06), rgba(255,160,60,0.02));
+    padding:6px 12px;border-radius:8px;border:1px solid rgba(255,215,0,0.04)
+  }
+  .word:nth-child(1){animation-delay:0s}.word:nth-child(2){animation-delay:0.9s}
+  @keyframes wordFloat{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(-2deg)}100%{transform:translateY(0) rotate(0)}}
+
+  /* canvas 层 */
+  #snow {position:fixed;inset:0;z-index:1;pointer-events:none}
+  #sparkles {position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen}
+
+  /* 小屏幕调整 */
+  @media (max-width:520px){
+    .card{padding:18px;border-radius:12px}
+    .lantern{width:86px;top:8px}
+    .word{font-size: clamp(28px,10vw,56px)}
+  }
+</style>
+</head>
+<body class="grain" aria-label="新春祝福页面">
+  <!-- 左右灯笼（内嵌 SVG，无外链） -->
+  <div class="lantern left" aria-hidden="true" style="width:110px">
+    <svg viewBox="0 0 120 220" width="110" height="200" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="lg1" x1="0" x2="1"><stop offset="0" stop-color="#ffd46b"/><stop offset="1" stop-color="#ff7043"/></linearGradient></defs>
+      <g>
+        <rect x="10" y="24" width="100" height="140" rx="44" fill="#b71c1c"/>
+        <rect x="16" y="30" width="88" height="128" rx="38" fill="url(#lg1)" opacity="0.95"/>
+        <g fill="#8b0000" opacity="0.12"><rect x="36" y="44" width="48" height="96" rx="22"/></g>
+      </g>
+    </svg>
+  </div>
+  <div class="lantern right" aria-hidden="true" style="width:110px">
+    <svg viewBox="0 0 120 220" width="110" height="200" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="lg2" x1="0" x2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ff9a3c"/></linearGradient></defs>
+      <g>
+        <rect x="10" y="24" width="100" height="140" rx="44" fill="#9b111e"/>
+        <rect x="16" y="30" width="88" height="128" rx="38" fill="url(#lg2)" opacity="0.95"/>
+        <g fill="#8b0000" opacity="0.11"><rect x="36" y="44" width="48" height="96" rx="22"/></g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 雪花 canvas -->
+  <canvas id="snow"></canvas>
+
+  <!-- 柔和光晕与星点 -->
+  <svg id="sparkles" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <radialGradient id="gSpark" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff7d6" stop-opacity="0.9"/><stop offset="100%" stop-color="#ffb74d" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="12%" cy="12%" r="120" fill="url(#gSpark)" opacity="0.06"/>
+    <circle cx="85%" cy="14%" r="140" fill="url(#gSpark)" opacity="0.07"/>
+    <g fill="#fff8d0" opacity="0.12">
+      <circle cx="30%" cy="28%" r="2.4"/>
+      <circle cx="25%" cy="18%" r="1.6"/>
+      <circle cx="70%" cy="24%" r="1.8"/>
+    </g>
+  </svg>
+
+  <main class="stage" role="main">
+    <div class="card" role="region" aria-label="新春祝福卡片">
+      <h1 class="title">恭贺新禧 · 新春快乐</h1>
+      <p class="subtitle">春回大地，福满人间。愿你在新的一年：阖家欢乐、身体安康、事业腾达、吉星高照。</p>
+      <div class="blessings" aria-hidden="false">
+        <div class="blessing">新春快乐</div>
+        <div class="blessing">阖家平安</div>
+        <div class="blessing">心想事成</div>
+        <div class="blessing">福运连连</div>
+        <div class="blessing">事业有成</div>
+        <div class="blessing">步步高升</div>
+      </div>
+    </div>
+  </main>
+
+  <div class="floating-words" aria-hidden="true">
+    <div class="word">福</div>
+    <div class="word">春</div>
+  </div>
+
+<script>
+/* 新春雪花 + 少量金色碎片：适度随机，轻盈细小 */
+(function(){
+  const canvas = document.getElementById('snow');
+  const ctx = canvas.getContext('2d');
+  let W = innerWidth, H = innerHeight;
+  function resize(){
+    W = innerWidth; H = innerHeight;
+    const ratio = devicePixelRatio || 1;
+    canvas.width = W * ratio;
+    canvas.height = H * ratio;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+  }
+  resize(); addEventListener('resize', resize);
+
+  // 雪花类：小巧、随机漂动
+  function Snow(){
+    this.reset(true);
+  }
+  Snow.prototype.reset = function(init){
+    this.x = Math.random()*W;
+    this.y = init ? Math.random()*H : -10 - Math.random()*80;
+    this.size = (Math.random()*2.6)+0.6;
+    this.speed = (Math.random()*0.8)+0.4;
+    this.drift = (Math.random()*0.9)-0.45;
+    this.phase = Math.random()*Math.PI*2;
+    this.swing = (Math.random()*1.6)+0.4;
+    this.opacity = 0.45 + Math.random()*0.6;
+    this.rotation = Math.random()*360;
+    this.rotSpeed = (Math.random()*0.6)-0.3;
+    this.life = 0;
+    this.ttl = (H / (this.speed+0.1)) * (0.7 + Math.random()*0.9);
+  };
+  Snow.prototype.update = function(dt){
+    this.life += dt;
+    this.phase += 0.01 * this.swing * dt;
+    this.y += this.speed * dt * (0.9 + 0.6*Math.sin(this.phase*0.6));
+    this.x += this.drift * dt + Math.sin(this.phase)*0.3;
+    this.rotation += this.rotSpeed * dt;
+    if(this.y > H + 24 || this.x < -40 || this.x > W+40 || this.life > this.ttl) this.reset(false);
+  };
+  Snow.prototype.draw = function(ctx){
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.rotation*Math.PI/180);
+    const s = this.size;
+    ctx.fillStyle = 'rgba(255,255,255,0.98)';
+    ctx.beginPath();
+    for(let i=0;i<6;i++){
+      const a = (i/6)*Math.PI*2;
+      const r = (i%2===0)? s*1.3 : s*0.5;
+      ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+    }
+    ctx.closePath();
+    ctx.shadowColor = 'rgba(255,230,180,0.14)';
+    ctx.shadowBlur = s*3;
+    ctx.fill();
+    ctx.restore();
+  };
+
+  // 金色小碎片（节日感）
+  function Confetti(){
+    this.x = Math.random()*W;
+    this.y = -10 - Math.random()*200;
+    this.vx = (Math.random()*2)-1;
+    this.vy = 1 + Math.random()*2.2;
+    this.size = 1.6 + Math.random()*3.4;
+    this.life = 0;
+    this.ttl = 90 + Math.random()*140;
+    this.color = ['#ffd700','#ffdf7a','#ffe6b3'][Math.floor(Math.random()*3)];
+    this.rot = Math.random()*Math.PI*2;
+    this.rotSpeed = (Math.random()*0.12)-0.06;
+  }
+  Confetti.prototype.update = function(){ this.life++; this.x += this.vx; this.y += this.vy; this.vy += 0.02; this.rot += this.rotSpeed; }
+  Confetti.prototype.draw = function(ctx){
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 1 - this.life/this.ttl);
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.rot);
+    ctx.fillStyle = this.color;
+    const s = this.size;
+    ctx.fillRect(-s/2,-s/2,s,s);
+    ctx.restore();
+  };
+
+  // 初始化
+  const flakes = [];
+  const baseCount = Math.max(80, Math.floor((W*H)/10000));
+  for(let i=0;i<baseCount;i++) flakes.push(new Snow());
+  const confs = [];
+  setInterval(()=>{ if(Math.random() < 0.6) confs.push(new Confetti()); if(confs.length>70) confs.splice(0, confs.length-60); }, 600 + Math.random()*400);
+
+  let last = performance.now();
+  function loop(now){
+    const dt = Math.max(1, (now-last)*0.06);
+    last = now;
+    ctx.clearRect(0,0,W,H);
+
+    // 柔和灯光渐变（左上偏暖）
+    const g = ctx.createLinearGradient(0,0,W*0.6,H*0.6);
+    g.addColorStop(0, 'rgba(255,220,120,0.06)');
+    g.addColorStop(1, 'rgba(255,120,120,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+    // 绘制雪花
+    for(let i=0;i<flakes.length;i++){
+      flakes[i].update(dt);
+      flakes[i].draw(ctx);
+    }
+
+    // 绘制 confetti
+    for(let i=confs.length-1;i>=0;i--){
+      const c = confs[i];
+      c.update();
+      c.draw(ctx);
+      if(c.life > c.ttl) confs.splice(i,1);
+    }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // 节省资源：页面隐藏时可不频繁绘制（浏览器通常会自动节流）
+  document.addEventListener('visibilitychange', ()=>{ /* noop: rely on browser */ });
+
+})();
+</script>
+</body>
+</html>
